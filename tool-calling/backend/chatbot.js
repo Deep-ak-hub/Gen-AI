@@ -46,7 +46,7 @@ export async function generateAIResponse(userMessage) {
             function: {
               name: "webSearch",
               description:
-                "Search the latest informatin and realtime data on the internet",
+                "Search the latest information and realtime data on the internet",
               parameters: {
                 type: "object",
                 properties: {
