@@ -20,21 +20,50 @@ function App() {
     setIsToolMenuOpen(false)
   }
 
-  const handleSendMessage = (event?: React.FormEvent) => {
+  const handleSendMessage = async (event?: React.FormEvent) => {
     event?.preventDefault()
 
     const trimmedInput = input.trim()
     if (!trimmedInput) return
 
-    const newMessage: Message = {
+    const userMessage: Message = {
       id: Date.now(),
       role: 'user',
       content: trimmedInput,
     }
 
-    setMessages((currentMessages) => [...currentMessages, newMessage])
+    setMessages((currentMessages) => [...currentMessages, userMessage])
     setInput('')
     setIsToolMenuOpen(false)
+
+    try {
+      const response = await fetch('http://localhost:7000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: trimmedInput }),
+      })
+
+      const data = await response.json()
+
+      const assistantMessage: Message = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: data.message || 'No response received.',
+      }
+
+      setMessages((currentMessages) => [...currentMessages, assistantMessage])
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      const assistantMessage: Message = {
+        id: Date.now() + 2,
+        role: 'assistant',
+        content: 'Sorry, something went wrong while connecting to the server.',
+      }
+
+      setMessages((currentMessages) => [...currentMessages, assistantMessage])
+    }
   }
 
   return (
