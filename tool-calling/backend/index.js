@@ -20,8 +20,6 @@ app.post("/chat", async(req,res) => {
 
     const result= await generateAIResponse(message)
     res.json({message: result})
-
-    
 })
 
 app.listen(PORT, () => {
