@@ -1,27 +1,36 @@
-import express from "express";
-import cors from "cors"
-import { generateAIResponse } from "./chatbot.js";
+import dotenv from "dotenv";
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
-const app = express();
+dotenv.config();
 
-app.use(cors())
+import http from "http";
+import { mongoDbInit } from "./src/config/mongodb.config.js";
+import app from "./src/config/express.config.js";
 
-app.use(express.json())
+const server = http.createServer(app);
 
-const PORT = process.env.PORT || 7000;
+const HOST = "127.0.0.1";
+const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+(async () => {
+  try { 
+    await mongoDbInit(); 
+    
+    server.listen(PORT, HOST, () => { 
+      console.log(`🚀 Server is running on http://${HOST}:${PORT}`); 
+      console.log(`Press CTRL C to disconnect the server....`); 
+    }); 
 
-app.post("/chat", async(req,res) => {
-    const {message} = req.body
-    console.log("message: ", message);
+    // Handle port/binding errors explicitly
+    server.on("error", (error) => {
+      console.error("Server failed to start:", error.message);
+      process.exit(1);
+    });
+    
+  } catch (exception) { 
+    console.error("Database connection or initialization failed:", exception); 
+    process.exit(1); 
+  }
+})();
 
-    const result= await generateAIResponse(message)
-    res.json({message: result})
-})
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
