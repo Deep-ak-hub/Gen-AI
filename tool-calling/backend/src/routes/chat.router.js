@@ -3,6 +3,7 @@ import chatController from "../controllers/chat.controller.js"
 
 const chatRouter = express.Router()
 
-chatRouter.get("/", chatController.generateChat)
+chatRouter.post("/", chatController.generateAIResponse)
+chatRouter.get("/", chatController.generateAIResponse)
 
 export default chatRouter

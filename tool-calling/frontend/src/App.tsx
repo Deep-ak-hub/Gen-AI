@@ -37,7 +37,7 @@ function App() {
     setIsToolMenuOpen(false)
 
     try {
-      const response = await fetch('http://localhost:7000/chat', {
+      const response = await fetch('http://localhost:3000/api/v1/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,10 +47,17 @@ function App() {
 
       const data = await response.json()
 
+      const assistantReply =
+        typeof data?.data === 'string'
+          ? data.data
+          : typeof data?.message === 'string'
+            ? data.message
+            : 'No response received.'
+
       const assistantMessage: Message = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: data.message || 'No response received.',
+        content: assistantReply,
       }
 
       setMessages((currentMessages) => [...currentMessages, assistantMessage])
@@ -69,8 +76,8 @@ function App() {
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100">
       <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-2 py-2 sm:px-4 sm:py-4 lg:px-6 lg:py-6">
-        <main className="flex flex-1 flex-col overflow-hidden rounded-3xl bg-[#0f172a]">
-          <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-5 sm:py-5 lg:px-8 lg:py-6">
+        <main className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl bg-[#0f172a]">
+          <div className="flex-1 min-h-0 overflow-y-auto px-3 py-4 sm:px-5 sm:py-5 lg:px-8 lg:py-6">
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 sm:gap-4">
               {messages.map((message) => (
                 <div
@@ -91,10 +98,10 @@ function App() {
             </div>
           </div>
 
-          <div className="border-t border-slate-800/80 bg-[#0f172a] px-2 pb-2 pt-3 sm:px-4 sm:pb-4 lg:px-6">
+          <div className="sticky bottom-0 border-t border-slate-800/80 bg-[#0f172a] px-2 pb-2 pt-3 sm:px-4 sm:pb-4 lg:px-6">
             <form
               onSubmit={handleSendMessage}
-              className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-700/70 bg-[#111827] p-2 shadow-sm shadow-black/20"
+              className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-700/70 bg-[#111827] p-2 shadow-sm shadow-black/20 "
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <div className="relative">

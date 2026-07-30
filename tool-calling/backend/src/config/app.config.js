@@ -1,11 +1,14 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import Groq from "groq-sdk";
+import { tavily } from "@tavily/core";
+
 const DbConfig = {
   mongodb: {
     url: process.env.MONGODB_URL,
     dbName: process.env.MONGODB_NAME,
-  }
+  },
 };
 
 const ResendConfig = {
@@ -18,9 +21,7 @@ const AppConfig = {
   jwtSecret: process.env.JWT_SECRET,
 };
 
+const groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const searchClient = tavily(process.env.TAVILY_API_KEY);
 
-export {
-  DbConfig,
-  ResendConfig,
-  AppConfig,
-};
+export { DbConfig, ResendConfig, AppConfig, groqClient, searchClient };
